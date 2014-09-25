@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Game of Life</title>
+	<script src="config_vars.js"></script>
+	<script src="drawing.js"></script>
+	<script src="life.js"></script>
+
+
+</head>
+
+<body>
+<script type="text/javascript">
+	reset_all();
+	initialSetup();
+	//drawInitialGrid();
+
+	var alive_cells = [];
+	var alive_prob = .3;
+	for (var i = 0; i < GRID_WIDTH; i++) {
+		for (var j = 0; j < GRID_HEIGHT; j++) {
+			var rand = Math.random();
+			if (rand <= alive_prob) {
+				alive_cells.push(Coord(i,j));
+			}
+		}
+	}
+	/*
+	drawInitialGrid();
+	initialSetup();
+	setStartingPosition(alive_cells);
+	run();*/
+</script>
+
+
+</body>
+</html>

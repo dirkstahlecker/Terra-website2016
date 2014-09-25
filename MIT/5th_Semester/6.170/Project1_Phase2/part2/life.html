@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Game of Life</title>
+	<script src="drawing.js"></script>
+	<script src="config_vars.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="life.js"></script>
+
+	<style>
+		body {
+			background-color: #C0C0C0;
+		}
+		.row {
+			height: 10px;
+		}
+		.cell {
+			width: 10px;
+			height: 10px;
+			color: black;
+			border-width: 1px;
+			border-style: solid;
+			display: inline-block;
+			position: relative;
+		}
+		.alive {
+			background: black;
+		}
+		.dead {
+			background: #C0C0C0;
+		}
+		.left {
+			float: left;
+		}
+		.right {
+			display: inline-block;
+		}
+		.center {
+			display: block;
+			text-align: center;
+		}
+		.top {
+			display: block;
+			float: top;
+		}
+		#headertext {
+			font-size: 36px;
+			color: blue;
+			text-align: center;
+			font-family: courier;
+		}
+		#rightDiv {
+			background-color: blue;
+			padding: 10px;
+		}
+		.button {
+			font-family: courier;
+			background-color: #000;
+			color: #FFF;
+
+		}
+		.button:disabled {
+			background-color: #666;
+		}
+	</style>
+</head>
+
+<body onload="initialSetup(true)">
+<div class="top" id="headertext">
+The Game of Life<br />
+</div>
+
+<div class="center">
+	<form>
+		<!--
+		<label for="grid_size">Grid Size:</label>
+		<input type="text" name="grid_size" id="grid_size" /><br />
+		
+		<input type="button" name="refresh_btn" class="button" id="refresh_btn" value="Refresh" onclick="handleRefresh()" />
+	-->
+		<input type="button" name="randomize_btn" class="button" id="randomize_btn" value="Randomize!" onclick="handleRandomize()" /><br />
+		<input type="button" name="start_btn"  class="button"id="start_btn" value="Start" onclick="handleStart()" />
+		<input type="button" name="stop_btn" class="button" id="stop_btn" value="Stop" onclick="handleStop()" />
+		<input type="button" name="reset_btn" class="button" id="reset_btn" value="Reset" onclick="handleReset()" />
+
+	</form>
+</div>
+
+
+
+</body>
+</html>
