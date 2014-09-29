@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="validate.js"></script>
+</head>
+
+<body>
+
+
+
+<form name="loginForm" onSubmit="return validateLogin();" action="/twitterFeed" method="post">
+    Log in:<br />
+    <label for="user_box">Username:</label>
+    <input type="text" name="user_box" id="user_box" placeholder="username" /> 
+    <label for="password_box">Password:</label>
+    <input type="password" name="password_box" id="password_box" placeholder="password" />
+    <input type="submit" value="Log in"/>
+</form>
+
+<form name="createUserForm" onSubmit="return validateCreateUser();" action="authenticate.js" method="post">
+    Create New Account:</br>
+    <label for="user_box">Username:</label>
+    <input type="text" name="user_box" /><br />
+    <label for="password1">Password:</label>
+    <input type="password" name="password1" /><br />
+    <label for="password2">Confirm password:</label>
+    <input type="password" name="password2" /><br />
+    <input type="submit" value="Create Account" />
+</form>
+
+
+
+</body>
+</html>
