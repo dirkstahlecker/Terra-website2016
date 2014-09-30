@@ -3,7 +3,7 @@ var router = express.Router();
 
 router.get('/', function(req,res) {
 	res.write('<html><body>Hello Hello World!</body></html>');
-})
+});
 
 /*
 router.get('/', function(req, res) {
