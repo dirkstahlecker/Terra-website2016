@@ -8,7 +8,7 @@
 
 
 
-<form name="loginForm" onSubmit="return validateLogin();" action="/twitterfeed" method="post">
+<form name="loginForm" action="/twitterfeed" method="post"><!-- onSubmit="return validateLogin();" -->
     Log in:<br />
     <label for="user_box">Username:</label>
     <input type="text" name="user_box" id="user_box" placeholder="username" /> 
@@ -17,10 +17,10 @@
     <input type="submit" value="Log in"/>
 </form>
 
-<form name="createUserForm" onSubmit="return validateCreateUser();" action="authenticate.js" method="post">
+<form name="createUserForm" onSubmit="return validateCreateUser();" action="/" method="post">
     Create New Account:</br>
-    <label for="user_box">Username:</label>
-    <input type="text" name="user_box" /><br />
+    <label for="createUserBox">Username:</label>
+    <input type="text" name="createUserBox" /><br />
     <label for="password1">Password:</label>
     <input type="password" name="password1" /><br />
     <label for="password2">Confirm password:</label>

@@ -19,6 +19,7 @@ function showTweets() {
 
 	Tweet.find(function (err, tweets) {
 		if (err) return console.error(err);
+
 		console.log(tweets.message);
 	});
 /*

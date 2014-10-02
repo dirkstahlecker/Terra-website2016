@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fritter Feed</title>
+<style>
+.displayTweet {
+
+}
+</style>
+</head>
+
+<body>
+	<h1>Fritter</h1>
+
+	<div>
+	<% for(var i = 0; i < tweets.length; i++) {%>
+		<div class="displayTweet"><%= tweets[i].message %></div>
+	<% } %>
+	</div>
+
+<form name="newTweetForm" action="/twitterfeed/newtweet" method="post">
+Post New Tweet:<br />
+<input type="text" id="newTweetInput" name="newTweetInput" />
+<input type="submit" value="Enter" />
+</form>
+
+</body>
+</html>
