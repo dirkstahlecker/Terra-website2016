@@ -1,4 +1,4 @@
-function addSingleTweet(tweet) {
+/*function addSingleTweet(tweet) {
 	var myTweet = new Tweet({ message: tweet });
 	myTweet.save(function (err, tweet) {
 		if (err) return console.error(err);
@@ -30,7 +30,7 @@ function showTweets() {
 		div.innerHTML += '<div id="tweet_'+num+'>' + tweet + '</div>';
 	}
 */
-}
+//}
 
 
 /*

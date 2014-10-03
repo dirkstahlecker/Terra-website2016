@@ -3,26 +3,43 @@
 <head>
 <title>Fritter Feed</title>
 <style>
+.displayTweetArea {
+	width: 50%;
+	height: 350px;
+	overflow: auto;
+}
 .displayTweet {
-
+	padding: 10px;
+	border-color: #1589FF;
+	border-style: solid;
+	border-width: 1px;
 }
 </style>
 </head>
 
 <body>
-	<h1>Fritter</h1>
+<h1>Fritter</h1>
 
-	<div>
-	<% for(var i = 0; i < tweets.length; i++) {%>
-		<div class="displayTweet"><%= tweets[i].message %></div>
-	<% } %>
-	</div>
+<div class="displayTweetArea">
+<% for(var i = tweets.length-1; i > 0; i--) {%>
+	<div class="displayTweet" id="tweets<%= tweets[i]._id %>"><%= tweets[i].username %>: <%= tweets[i].message %></div>
+	&nbsp;
+<% } %>
+</div>
+<br />
+<br />
 
 <form name="newTweetForm" action="/twitterfeed/newtweet" method="post">
 Post New Tweet:<br />
 <input type="text" id="newTweetInput" name="newTweetInput" />
 <input type="submit" value="Enter" />
 </form>
+
+<br />
+<form name="logOutForm" action="/" method="post">
+<input type="submit" value="Log out">
+</form>
+
 
 </body>
 </html>

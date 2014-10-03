@@ -11,10 +11,11 @@ var db = monk('localhost:27017/tweetsdb');
 var MongoClient = require('mongodb').MongoClient;
 */
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/new_schema_hopefully_work'); //TODO: name this correctly
 
 var tweetSchema = mongoose.Schema({
-	message: String
+	message: String,
+	username: String
 });
 var userAccountSchema = mongoose.Schema({
 	username: String,
@@ -27,24 +28,14 @@ var UserAccount = mongoose.model('UserAccount',userAccountSchema);
 //var mongoStore = require('connect-mongo')(express);
 
 var app = express();
-app.use(session({secret: 'typed on a leopard'}));
-
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({secret: 'mntyuioplnbdw34567890okjuy6543ewsxcfgyu89okj'}));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
-/*
-app.use(function(req,res,next){
-    req.db = db;
-    next();
-});
-*/
-
 
 
 //var routes = require('./routes/index');
@@ -56,69 +47,63 @@ app.use('/', express.static(__dirname)); //initialize to index.html
 //app.use('/twitterfeed', express.static(__dirname + '/twitterfeed.html'));
 //app.use('/twitterfeed', twitterfeed);
 
+/* var currentSession = new Session({ user: username });
+	myTweet.save(function (err, tweet) {
+		if (err) return console.error(err);
+		console.log("Successfully saved!");
+); */
 
 app.post('/twitterfeed', function(req,res) {
-
 	var username = req.body.user_box;
 	var password = req.body.password_box;
-
-	req.session.name = username;
 
 	//see if user credentials exist in the database
 	UserAccount.findOne({'username': username, 'password': password}, {}, function (err, users) {
 		if (err) return console.error(err);
-		console.log("Users: ");
-		console.log(users);
-
+		//console.log("Users: ");
+		//console.log(users);
+		
 		//if they do, allow them to access the twitterfeed page
 		if (users) {
-			//res.sendFile(__dirname + '/twitterfeed.html'); //opens the feed page if credentials are valid
-			res.render('twitterfeed/twitterfeed.ejs', { tweets: tweets });
+			req.session.name = username;
+			Tweet.find(function (err, tweets) {
+				if (err) return console.error(err);
+				res.render('twitterfeed/twitterfeed.ejs', { 'tweets': tweets });
+			});
 		}
 		else {
 			res.redirect('/');
 		}
 	});
-
-/*
-	var currentSession = new Session({ user: username });
-	myTweet.save(function (err, tweet) {
-		if (err) return console.error(err);
-		console.log("Successfully saved!");
-
-	});
-*/
-	
 });
 
 app.post('/twitterfeed/newtweet', function(req,res) {
-	/*
-	if (!req.session) {
-		//TODO: do something
+	var username = undefined;
+	if (req.session != undefined && req.session != null) { //only show feed if there is a user logged in
+		username = req.session.name;
+		console.log("username: ");
+		console.log(username);
+
+		var tweetMessage = req.body.newTweetInput;
+
+		var newTweet = new Tweet({ 'message': tweetMessage, 'username': username });
+		newTweet.save(function(err,tweets) {
+			if (err) return console.error(err);
+			console.log("newTweet.user: ");
+			console.log(newTweet.username);
+
+			Tweet.find(function (err, tweets) {
+				if (err) return console.error(err);
+				console.log("Tweets:");
+				console.log(tweets);
+				res.render('twitterfeed/twitterfeed.ejs', { 'tweets': tweets });
+			});
+		});
+
 	}
 	else {
-		var username = req.session;
-		var tweet = req.body.newTweetInput;
-		console.log(tweet);
-
-		res.sendFile(__dirname + '/twitterfeed.html'); //refresh page
+		res.redirect('/');
 	}
-	*/
-	var tweetMessage = req.body.newTweetInput;
-	var newTweet = new Tweet({'message': tweetMessage});
-	newTweet.save(function(err,tweets) {
-		if (err) return console.error(err);
-		console.log("Tweet stored to database");
-
-		Tweet.find(function (err, tweets) {
-			if (err) return console.error(err);
-			console.log("Tweets: ");
-			console.log(tweets);
-
-			res.render('twitterfeed/twitterfeed.ejs', { tweets: tweets });
-
-		});
-	});
 
 	//res.sendFile(__dirname + '/twitterfeed.html'); //refresh page
 });
@@ -134,6 +119,7 @@ app.post('/', function(req,res) {
             console.log("ERROR in saving info to database");
             return console.error(err);
         }
+        res.redirect('/');
         /*
         UserAccount.find(function (err, users) {
 			if (err) return console.error(err);
@@ -142,7 +128,6 @@ app.post('/', function(req,res) {
 		}); */
     });
 
-	res.redirect('/');
 });
 
 
