@@ -3,6 +3,16 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session')
 var path = require('path');
+
+var connection_string = 'localhost/mymongo';
+
+if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
+  connection_string = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ':' +
+        process.env.OPENSHIFT_MONGODB_DB_PASSWORD + '@' +
+        process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+        process.env.OPENSHIFT_MONGODB_DB_PORT + '/mymongo';
+}
+
 /*
 var mongo = require('mongodb');
 var monk = require('monk');
@@ -11,7 +21,8 @@ var db = monk('localhost:27017/tweetsdb');
 var MongoClient = require('mongodb').MongoClient;
 */
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/new_schema_hopefully_work'); //TODO: name this correctly
+//mongoose.connect('mongodb://localhost/new_schema_hopefully_work'); //TODO: name this correctly
+mongoose.connect(connection_string);
 
 var tweetSchema = mongoose.Schema({
 	message: String,
@@ -82,7 +93,7 @@ app.get('/twitterfeed/delete', function(req,res) {
 	var username = undefined;
 	if (req.session != undefined && req.session != null) { //only show feed if there is a user logged in
 		username = req.session.name;
-		
+
 		Tweet.find({ '_id': _id }).remove(function (err, result) {
 			console.log("removing");
 		});
@@ -138,5 +149,7 @@ app.post('/', function(req,res) {
 
 
 
-app.listen(8080);
+app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080,
+           process.env.OPENSHIFT_NODEJS_IP);
+
 console.log("Listening on port :8080");
