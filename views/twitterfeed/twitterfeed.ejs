@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="twitterfeed.js"></script>
+	<title>Fritter Feed</title>
+
+	<style>
+	.displayTweetArea {
+		width: 50%;
+		height: 350px;
+		overflow: auto;
+	}
+	.displayTweet {
+		padding: 10px;
+		border-color: #1589FF;
+		border-style: solid;
+		border-width: 1px;
+		position: block;
+	}
+	.username {
+		color: #00F;
+		position: inline;
+	}
+	.message {
+		position: inline;
+	}
+	.delete {
+		text-align: right;
+		cursor: pointer;
+		position: inline;
+	}
+	</style>
+</head>
+
+<body>
+<h1>Fritter</h1>
+
+<div class="displayTweetArea">
+<% for(var i = tweets.length-1; i > 0; i--) {%>
+	<div class="displayTweet" id="tweets<%= tweets[i]._id %>">
+		<div class="username"><%= tweets[i].username %>:</div>
+		<div class="message"><%= tweets[i].message %></div>
+		<!--<div class="delete" onclick="deleteTweet('<%= tweets[i]._id %>')">X</div>-->
+		<form class="delete" action="/twitterfeed/delete" method="get">
+			<input type="submit" value="Delete" class="delete">
+		</form>
+	</div>
+	&nbsp;
+<% } %>
+</div>
+<br />
+<br />
+
+<form name="newTweetForm" action="/twitterfeed/newtweet" method="post">
+Post New Tweet:<br />
+<input type="text" id="newTweetInput" name="newTweetInput" />
+<input type="submit" value="Enter" />
+</form>
+
+<br />
+<form name="logOutForm" action="/" method="post">
+<input type="submit" value="Log out">
+</form>
+
+
+</body>
+</html>
