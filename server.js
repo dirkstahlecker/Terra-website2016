@@ -60,8 +60,6 @@ app.post('/twitterfeed', function(req,res) {
 	//see if user credentials exist in the database
 	UserAccount.findOne({'username': username, 'password': password}, {}, function (err, users) {
 		if (err) return console.error(err);
-		//console.log("Users: ");
-		//console.log(users);
 		
 		//if they do, allow them to access the twitterfeed page
 		if (users) {
@@ -75,6 +73,23 @@ app.post('/twitterfeed', function(req,res) {
 			res.redirect('/');
 		}
 	});
+});
+
+app.get('/twitterfeed/delete', function(req,res) {
+	console.log("Deleting");
+
+	//copied directly from twitterfeed new tweet post
+	var username = undefined;
+	if (req.session != undefined && req.session != null) { //only show feed if there is a user logged in
+		username = req.session.name;
+		
+		Tweet.find({ '_id': _id }).remove(function (err, result) {
+			console.log("removing");
+		});
+	}
+	else {
+		res.redirect('/'); //back to login screen
+	}
 });
 
 app.post('/twitterfeed/newtweet', function(req,res) {
@@ -99,13 +114,10 @@ app.post('/twitterfeed/newtweet', function(req,res) {
 				res.render('twitterfeed/twitterfeed.ejs', { 'tweets': tweets });
 			});
 		});
-
 	}
 	else {
-		res.redirect('/');
+		res.redirect('/'); //back to login screen
 	}
-
-	//res.sendFile(__dirname + '/twitterfeed.html'); //refresh page
 });
 
 app.post('/', function(req,res) {
@@ -120,12 +132,6 @@ app.post('/', function(req,res) {
             return console.error(err);
         }
         res.redirect('/');
-        /*
-        UserAccount.find(function (err, users) {
-			if (err) return console.error(err);
-			console.log("Users: ");
-			console.log(users);
-		}); */
     });
 
 });
