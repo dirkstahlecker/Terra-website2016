@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
 var mongo = require('mongodb');
 //var monk = require('monk');
@@ -50,6 +51,12 @@ app.use(function(req,res, next){
     req.tweetDB = Tweet;
     next();
 });
+
+app.use(session({
+  resave: false, // don't save session if unmodified
+  saveUninitialized: false, // don't create session until something stored
+  secret: 'leopard laughter'
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

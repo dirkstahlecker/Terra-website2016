@@ -13,6 +13,7 @@ router.post('/', function(req, res) {
 		if (err) return console.error(err);
 
 		if (users) {
+			req.session.user = username; //set initial session username
 			res.render('login/login', { success: true, username: username });
 		}
 		else {
