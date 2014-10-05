@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Fritter</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
 <style>
 	.displayTweetArea {
 		width: 50%;
@@ -22,33 +23,66 @@
 	.message {
 		position: inline;
 	}
-	.delete {
+	.controls {
 		text-align: right;
-		cursor: pointer;
 		position: inline;
 	}
+	a.controls {
+		cursor: pointer;
+	}
 </style>
+<script type="text/javascript">
+	function doDelete(id) {
+		//store the id value in a hidden field, and submit form for handling
+		document.dataSender.dataHolder.value = id;
+		document.dataSender.submit();
+	}
+	function doEdit() {
+		document.dataSender.dataHolder.value = id;
+		document.dataSender.submit();
+	}
+</script>
 </head>
 
 <body>
-	<h1>Welcome to Fritter</h1>
-	<div><a href="/">Go back home</a></div>
+<form name="dataSender" id="dataSender" method="post" action="/fritter/delete">
+	<input type="hidden" name="dataHolder" id="dataHolder">
+</form>
+
+<h1>Welcome to Fritter</h1>
+<div><a href="/">Go back home</a></div>
+<p>&nbsp;</p>
     
 <div class="displayTweetArea">
 <% for(var i = tweets.length-1; i > 0; i--) {%>
 	<div class="displayTweet" id="tweets<%= tweets[i]._id %>">
 		<div class="username"><%= tweets[i].username %>:</div>
 		<div class="message"><%= tweets[i].message %></div>
-		<!--<div class="delete" onclick="deleteTweet('<%= tweets[i]._id %>')">X</div>-
-		<form class="delete" action="/twitterfeed/delete" method="get">
-			<input type="submit" value="Delete" class="delete">-->
-		</form>
+		<!--<div class="delete" onclick="deleteTweet('<%= tweets[i]._id %>')">X</div>-->
+		<!--<div class="delete"><a href="/fritter/delete"> 
+			<input type="submit" value="Delete" class="delete" name="">
+		</div>-->
+		<div class="controls">
+			<a href="javascript:doEdit()">Edit</a>&nbsp;&nbsp;
+			<a href="javascript:doDelete('<%= tweets[i].id %>')">Delete</a>
+		</div>
 	</div>
 	&nbsp;
 <% } %>
 </div>
 <br />
 <br />
+
+<form name="newTweetForm" action="/fritter/new" method="post">
+Post New Tweet:<br />
+<input type="text" id="newTweetInput" name="newTweetInput" />
+<input type="submit" value="Enter" />
+</form>
+
+<br />
+<form name="logOutForm" action="/" method="post">
+<input type="submit" value="Log out">
+</form>
 
 </body>
 </html>
