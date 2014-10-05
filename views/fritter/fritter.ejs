@@ -34,19 +34,25 @@
 <script type="text/javascript">
 	function doDelete(id) {
 		//store the id value in a hidden field, and submit form for handling
-		document.dataSender.dataHolder.value = id;
+		console.log("doing delete");
+		document.delDataSender.delDataHolder.value = id;
 		document.dataSender.submit();
 	}
-	function doEdit() {
-		document.dataSender.dataHolder.value = id;
-		document.dataSender.submit();
+	function doEdit(id) {
+		console.log("doing edit");
+		document.editDataSender.editDataHolder.value = id;
+		document.editDataSender.submit();
 	}
 </script>
 </head>
 
 <body>
-<form name="dataSender" id="dataSender" method="post" action="/fritter/delete">
-	<input type="hidden" name="dataHolder" id="dataHolder">
+
+<form name="delDataSender" id="delDataSender" method="post" action="/fritter/delete">
+	<input type="hidden" name="delDataHolder" id="delDataHolder">
+</form>
+<form name="editDataSender" id="editDataSender" method="post" action="/fritter/edit">
+	<input type="hidden" name="editDataHolder" id="editDataHolder">
 </form>
 
 <h1>Welcome to Fritter</h1>
@@ -57,13 +63,16 @@
 <% for(var i = tweets.length-1; i > 0; i--) {%>
 	<div class="displayTweet" id="tweets<%= tweets[i]._id %>">
 		<div class="username"><%= tweets[i].username %>:</div>
-		<div class="message"><%= tweets[i].message %></div>
-		<!--<div class="delete" onclick="deleteTweet('<%= tweets[i]._id %>')">X</div>-->
-		<!--<div class="delete"><a href="/fritter/delete"> 
-			<input type="submit" value="Delete" class="delete" name="">
-		</div>-->
+		<% if (editing == tweets[i]._id) { %>
+			<form name="editingSingleTweet" id="editingSingleTweet" method="post" action="/fritter/edit/update">
+				<input type="text" id="editingBox" name="editingBox" value="<%= tweets[i].message %>" />
+				<input type="submit" id="submitEdit" name="submitEdit" value="Enter" />
+			</form>
+		<% } else { %>
+			<div class="message"><%= tweets[i].message %></div>
+		<% } %>
 		<div class="controls">
-			<a href="javascript:doEdit()">Edit</a>&nbsp;&nbsp;
+			<a href="javascript:doEdit('<%= tweets[i].id %>')">Edit</a>&nbsp;&nbsp;
 			<a href="javascript:doDelete('<%= tweets[i].id %>')">Delete</a>
 		</div>
 	</div>

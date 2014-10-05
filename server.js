@@ -22,6 +22,15 @@ if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
 mongoose.connect(connection_string);
 
 
+/*///////////////////////////////////////////////////////////////// 
+To do:
+-editing puts edited tweet at the top
+    -have some counter and output in counted order
+-alert when trying to edit or delete other user's tweet
+    -better yet, don't have button for other users
+*/
+
+
 
 ///////////////////// Configure database
 var tweetSchema = mongoose.Schema({
