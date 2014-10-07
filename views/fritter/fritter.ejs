@@ -43,16 +43,24 @@
 		document.editDataSender.editDataHolder.value = id;
 		document.editDataSender.submit();
 	}
+	function doRetweet(id) {
+		console.log("doing retweet");
+		document.retweetDataSender.retweetDataHolder.value = id;
+		document.retweetDataSender.submit();
+	}
 </script>
 </head>
 
 <body>
 
 <form name="delDataSender" id="delDataSender" method="post" action="/fritter/delete">
-	<input type="hidden" name="delDataHolder" id="delDataHolder">
+	<input type="hidden" name="delDataHolder" id="delDataHolder" />
 </form>
 <form name="editDataSender" id="editDataSender" method="post" action="/fritter/edit">
-	<input type="hidden" name="editDataHolder" id="editDataHolder">
+	<input type="hidden" name="editDataHolder" id="editDataHolder" />
+</form>
+<form name="retweetDataSender" id="retweetDataSender" method="post" action="/fritter/retweet">
+	<input type="hidden" name="retweetDataHolder" id="retweetDatHolder" />
 </form>
 
 <h1>Welcome to Fritter</h1>
@@ -72,6 +80,7 @@
 			<div class="message"><%= tweets[i].message %></div>
 		<% } %>
 		<div class="controls">
+			<a href="javascript:doRetweet('<%= tweets[i].id %>')">Retweet</a>&nbsp;&nbsp;
 			<a href="javascript:doEdit('<%= tweets[i].id %>')">Edit</a>&nbsp;&nbsp;
 			<a href="javascript:doDelete('<%= tweets[i].id %>')">Delete</a>
 		</div>

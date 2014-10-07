@@ -89,6 +89,13 @@ router.post('/edit', function(req,res) {
 					res.render('fritter/fritter', { tweets: tweets, editing: id });
 				});
 			}
+			else { //can't delete tweets from another user
+				Tweet.find(function (err, tweets) {
+					if (err) return console.error(err);
+					//do nothing and return to feed
+					res.render('fritter/fritter', { tweets: tweets, editing: false });
+				});
+			}
 		});
 	}
 	else {
@@ -110,6 +117,40 @@ router.post('/edit/update', function(req,res) {
 				if (err) return console.error(err);
 				res.render('fritter/fritter', { tweets: tweets, editing: false });
 			});
+		});
+	}
+	else {
+		res.redirect('/', { state: 'undefined' }); //back to login screen
+	}
+});
+
+router.post('/retweet', function(req,res) {
+	if (req.session != undefined && req.session != null) { //only show feed if there is a user logged in
+		var Tweet = req.tweetDB;
+		var id = req.body.retweetDataHolder;
+		var username = req.session.user;
+
+		Tweet.findOne({ '_id': id }, function(err,tweet) {
+			if (username != tweet.username) { //can't retweet your own tweet
+				var message = tweet.message;
+				message = 'Retweeted from ' + tweet.username + ': ' + message; //TODO: if already been retweeted, handle
+				var reTweet = new Tweet({ 'message': message, 'username': username });
+
+				reTweet.save(function(err,tweets) {
+					Tweet.find(function (err, tweets) {
+						if (err) return console.error(err);
+						//return to the updated fritterfeed
+						res.render('fritter/fritter', { tweets: tweets, editing: false });
+					});
+				});
+			}
+			else { //can't delete tweets from another user
+				Tweet.find(function (err, tweets) {
+					if (err) return console.error(err);
+					//do nothing and return to feed
+					res.render('fritter/fritter', { tweets: tweets, editing: false });
+				});
+			}
 		});
 	}
 	else {
