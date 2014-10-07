@@ -1,17 +1,46 @@
 var express = require('express');
 var router = express.Router();
 
+/*
+Takes in a list of tweets, and removes those that
+are not by a user that we follow
+*/
+function filterFollowing(tweets, following) { //TODO: this can't have a callback in it
+	var ret = []; //the filtered list to return
+	console.log("filtering");
+	for(var i = 0; i < tweets.length; i++) {
+		tweet = tweets[i];
+		console.log(tweet.username);
+		var otherUser = tweet.username;
+		//if (following.indexOf(otherUser) != -1) {
+		for(var j = 0; j < following.length; j++) {
+			currentUser = following[j];
+			if(currentUser == otherUser) {
+				ret.push(tweet);
+			}
+		}
+	}
+	return ret;
+}
+
 router.get('/', function(req, res) {
 	if (req.session.user) {
 		var username = req.session.user;
-
 		var Tweet = req.tweetDB;
+		var UserAccount = req.userDB;
 
-		Tweet.find(function (err, tweets) {
+		UserAccount.findOne({ username: username }, function (err, user) {
 			if (err) return console.error(err);
-			res.render('fritter/fritter.ejs', { tweets: tweets, editing: false });
-		});
 
+			Tweet.find(function (err, tweets) {
+				if (err) return console.error(err);
+				var following = user.following;
+				tweets = filterFollowing(tweets,following);
+				console.log("tweets:");
+				console.log(tweets);
+				res.render('fritter/fritter.ejs', { tweets: tweets, editing: false });
+			});
+		});
 	}
 	else {
 		res.render('/', { state: 'undefined'});
@@ -77,8 +106,8 @@ router.post('/delete', function(req,res) {
 });
 
 router.post('/edit', function(req,res) {
-	var Tweet = req.tweetDB;
 	if (req.session != undefined && req.session != null) { //only show feed if there is a user logged in
+		var Tweet = req.tweetDB;
 		var id = req.body.editDataHolder;
 		var username = req.session.user;
 		Tweet.findOne({ '_id': id }, function(err,tweet) {
@@ -152,6 +181,40 @@ router.post('/retweet', function(req,res) {
 				});
 			}
 		});
+	}
+	else {
+		res.redirect('/', { state: 'undefined' }); //back to login screen
+	}
+});
+
+
+router.post('/follow', function(req,res) {
+	if (req.session != undefined && req.session != null) { //only show feed if there is a user logged in
+		var Tweet = req.tweetDB;
+		var username = req.session.user;
+		var toFollow = req.body.toFollowInput;
+		var UserAccount = req.userDB;
+
+		UserAccount.findOne({ username: username }, function (err, user) {
+			if (err) return console.error(err);
+
+			//need to delete then re-add record
+			var password = user.password;
+			var following = user.following;
+			following.push(toFollow);
+			user.remove(function() {
+				var newUser = new UserAccount({ username: username, password: password, following: following});
+				newUser.save(function(err,tweets) {
+					if(err) return console.error(err);
+					Tweet.find(function (err, tweets) {
+						if (err) return console.error(err);
+						//do nothing and return to feed
+						res.render('fritter/fritter', { tweets: tweets, editing: false });
+					});
+				});
+			});
+		});	
+
 	}
 	else {
 		res.redirect('/', { state: 'undefined' }); //back to login screen

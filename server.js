@@ -28,7 +28,7 @@ To do:
     -have some counter and output in counted order
 -alert when trying to edit or delete other user's tweet
     -better yet, don't have button for other users
-
+-don't allow duplicate usernames
 -my feature: retweeting
 */
 
@@ -42,7 +42,7 @@ var tweetSchema = mongoose.Schema({
 var userAccountSchema = mongoose.Schema({
     username: String,
     password: String,
-    following: String
+    following: []
 });
 
 var Tweet = mongoose.model('Tweet',tweetSchema);

@@ -66,7 +66,7 @@
 <h1>Welcome to Fritter</h1>
 <div><a href="/">Go back home</a></div>
 <p>&nbsp;</p>
-    
+
 <div class="displayTweetArea">
 <% for(var i = tweets.length-1; i > 0; i--) {%>
 	<div class="displayTweet" id="tweets<%= tweets[i]._id %>">
@@ -95,6 +95,13 @@
 Post New Tweet:<br />
 <input type="text" id="newTweetInput" name="newTweetInput" />
 <input type="submit" value="Enter" />
+</form>
+
+<br />
+<form name="followerUserForm" action="/fritter/follow" method="post">
+Type a user's name to follow:<br />
+<input type="text" id="toFollowInput" name="toFollowInput" />
+<input type="submit" value="Follow" />
 </form>
 
 <br />
