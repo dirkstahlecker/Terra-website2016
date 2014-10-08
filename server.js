@@ -12,12 +12,12 @@ var mongo = require('mongodb');
 //var db = monk('localhost:27017/fritterdb1');
 var mongoose = require('mongoose');
 
-var connection_string = 'localhost/mymongo';
+var connection_string = 'localhost/mymongo1';
 if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
   connection_string = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ':' +
         process.env.OPENSHIFT_MONGODB_DB_PASSWORD + '@' +
         process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
-        process.env.OPENSHIFT_MONGODB_DB_PORT + '/mymongo';
+        process.env.OPENSHIFT_MONGODB_DB_PORT + '/mymongo1';
 }
 mongoose.connect(connection_string);
 
@@ -28,7 +28,7 @@ To do:
     -have some counter and output in counted order
 -alert when trying to edit or delete other user's tweet
     -better yet, don't have button for other users
--don't allow duplicate usernames
+-view your own tweets
 -my feature: retweeting
 */
 
@@ -55,6 +55,8 @@ var index = require('./routes/index');
 var fritter = require('./routes/fritter');
 var login = require('./routes/login')
 var create_user = require('./routes/create_user');
+var path = require('path');
+var follow = require('./routes/follow');
 
 var app = express();
 
@@ -82,12 +84,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-
 app.use('/fritter', fritter);
 app.use('/', index);
 app.use('/login', login);
 app.use ('/create_user', create_user);
+app.use('/follow', follow);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -95,7 +96,6 @@ app.use(function(req, res, next) {
     err.status = 404;
     next(err);
 });
-
 
 
 

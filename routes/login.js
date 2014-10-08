@@ -6,7 +6,6 @@ router.post('/', function(req, res) {
 	var password = req.body.password_box;
 
 	console.log("in login route");
-	//TODO: access database
 
 	var UserAccount = req.userDB;
 	UserAccount.findOne({ username: username, password: password}, function (err, users) {

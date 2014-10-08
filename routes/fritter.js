@@ -5,7 +5,7 @@ var router = express.Router();
 Takes in a list of tweets, and removes those that
 are not by a user that we follow
 */
-function filterFollowing(tweets, following) { //TODO: this can't have a callback in it
+function filterFollowing(tweets, following) {
 	var ret = []; //the filtered list to return
 	console.log("filtering");
 	for(var i = 0; i < tweets.length; i++) {
@@ -162,6 +162,12 @@ router.post('/retweet', function(req,res) {
 		Tweet.findOne({ '_id': id }, function(err,tweet) {
 			if (username != tweet.username) { //can't retweet your own tweet
 				var message = tweet.message;
+				if (message.match(/Retweeted from /)) { //already been retweeted - only display most recent retweet
+					//therefore remove "Retweeted from ______"
+					message.replace(/Retweeted From /,'');
+					var loc = message.match(/.* /);
+					message = message.substring(loc,message.length);
+				}
 				message = 'Retweeted from ' + tweet.username + ': ' + message; //TODO: if already been retweeted, handle
 				var reTweet = new Tweet({ 'message': message, 'username': username });
 
@@ -197,24 +203,41 @@ router.post('/follow', function(req,res) {
 
 		UserAccount.findOne({ username: username }, function (err, user) {
 			if (err) return console.error(err);
-
-			//need to delete then re-add record
-			var password = user.password;
-			var following = user.following;
-			following.push(toFollow);
-			user.remove(function() {
-				var newUser = new UserAccount({ username: username, password: password, following: following});
-				newUser.save(function(err,tweets) {
-					if(err) return console.error(err);
+			if (user != undefined) {
+				//need to delete then re-add record
+				var password = user.password;
+				var following = user.following;
+				if(following.indexOf(toFollow) != -1) { //not already following
+					following.push(toFollow);
+					user.remove(function() {
+						var newUser = new UserAccount({ username: username, password: password, following: following});
+						newUser.save(function(err,tweets) {
+							if(err) return console.error(err);
+							Tweet.find(function (err, tweets) {
+								if (err) return console.error(err);
+								//do nothing and return to feed
+								res.render('fritter/fritter', { tweets: tweets, editing: false });
+							});
+						});
+					});
+				}
+				else { //already following user
 					Tweet.find(function (err, tweets) {
 						if (err) return console.error(err);
 						//do nothing and return to feed
 						res.render('fritter/fritter', { tweets: tweets, editing: false });
 					});
+				}
+			}
+			else { //user doesn't exist
+				Tweet.find(function (err, tweets) {
+					if (err) return console.error(err);
+					//do nothing and return to feed
+					res.render('fritter/fritter', { tweets: tweets, editing: false });
 				});
-			});
-		});	
+			}
 
+		});	
 	}
 	else {
 		res.redirect('/', { state: 'undefined' }); //back to login screen

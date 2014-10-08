@@ -8,6 +8,10 @@
 		width: 50%;
 		height: 350px;
 		overflow: auto;
+		border-style: solid;
+		border-color: black;
+		border-width: 2px;
+		padding: 10px;
 	}
 	.displayTweet {
 		padding: 10px;
@@ -63,9 +67,31 @@
 	<input type="hidden" name="retweetDataHolder" id="retweetDatHolder" />
 </form>
 
-<h1>Welcome to Fritter</h1>
-<div><a href="/">Go back home</a></div>
-<p>&nbsp;</p>
+<h1>Fritter Feed</h1>
+<p></p>
+<div><a href="/follow">View who you're following</a></div>
+<br />
+<br />
+
+<form name="newTweetForm" action="/fritter/new" method="post">
+Post New Tweet:<br />
+<input type="text" id="newTweetInput" name="newTweetInput" />
+<input type="submit" value="Enter" />
+</form>
+
+<br />
+<form name="followerUserForm" action="/fritter/follow" method="post">
+Type a user's name to follow:<br />
+<input type="text" id="toFollowInput" name="toFollowInput" />
+<input type="submit" value="Follow" />
+</form>
+
+<br />
+<form name="logOutForm" action="/" method="post">
+<input type="submit" value="Log out">
+</form>
+<br />
+<br />
 
 <div class="displayTweetArea">
 <% for(var i = tweets.length-1; i > 0; i--) {%>
@@ -91,23 +117,6 @@
 <br />
 <br />
 
-<form name="newTweetForm" action="/fritter/new" method="post">
-Post New Tweet:<br />
-<input type="text" id="newTweetInput" name="newTweetInput" />
-<input type="submit" value="Enter" />
-</form>
-
-<br />
-<form name="followerUserForm" action="/fritter/follow" method="post">
-Type a user's name to follow:<br />
-<input type="text" id="toFollowInput" name="toFollowInput" />
-<input type="submit" value="Follow" />
-</form>
-
-<br />
-<form name="logOutForm" action="/" method="post">
-<input type="submit" value="Log out">
-</form>
 
 </body>
 </html>
