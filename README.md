@@ -17,7 +17,7 @@ Design Choices:
 I decided to store both the user information and the tweets themselves in mongodb. For storing the tweets, I stored the message alongside the user that posted it, to allow for easy authentication when deciding if a user is allowed to delete or edit a tweet.
 I decided to use ejs view files because they allow for easy passing of information into dynamically generated files. Returning a list of all tweets from mongo is easy, then the ejs file can display them well. I decided to show all the tweets to every user, and mark the tweets with the user who wrote them. 
 I also decided to use Mongoose for accessing mongo. I found the Mongoose API very intuitive and understandable, and it did all the operations I wanted to perform very well and simply.
-I chose to only show the most recent user in the case of a tweet being retweeted multiple times. It would be very difficult to display multiple users in a chain of retweets in a visuall appealing manner, and generally the most recent is the most relevant. 
+I chose to only show the most recent user in the case of a tweet being retweeted multiple times. It would be very difficult to display multiple users in a chain of retweets in a visually appealing manner, and generally the most recent is the most relevant. 
 I also decided to 
 
 
