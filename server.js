@@ -1,155 +1,129 @@
+///////////////////// Overall requirements and connections
 var express = require('express');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var session = require('express-session')
 var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var session = require('express-session');
 
-var connection_string = 'localhost/mymongo';
+var mongo = require('mongodb');
+//var monk = require('monk');
+//var db = monk('localhost:27017/fritterdb1');
+var mongoose = require('mongoose');
 
+var connection_string = 'localhost/mymongo1';
 if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
   connection_string = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ':' +
         process.env.OPENSHIFT_MONGODB_DB_PASSWORD + '@' +
         process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
-        process.env.OPENSHIFT_MONGODB_DB_PORT + '/mymongo';
+        process.env.OPENSHIFT_MONGODB_DB_PORT + '/mymongo1';
 }
-
-/*
-var mongo = require('mongodb');
-var monk = require('monk');
-var db = monk('localhost:27017/tweetsdb');
-
-var MongoClient = require('mongodb').MongoClient;
-*/
-var mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost/new_schema_hopefully_work'); //TODO: name this correctly
 mongoose.connect(connection_string);
 
+
+/*///////////////////////////////////////////////////////////////// 
+To do:
+-editing puts edited tweet at the top
+    -have some counter and output in counted order
+-alert when trying to edit or delete other user's tweet
+    -better yet, don't have button for other users
+-view your own tweets
+-my feature: retweeting
+*/
+
+
+
+///////////////////// Configure database
 var tweetSchema = mongoose.Schema({
-	message: String,
-	username: String
+    message: String,
+    username: String
 });
 var userAccountSchema = mongoose.Schema({
-	username: String,
-	password: String
+    username: String,
+    password: String,
+    following: []
 });
 
 var Tweet = mongoose.model('Tweet',tweetSchema);
 var UserAccount = mongoose.model('UserAccount',userAccountSchema);
 
-//var mongoStore = require('connect-mongo')(express);
+
+
+///////////////////// Routing
+var index = require('./routes/index');
+var fritter = require('./routes/fritter');
+var login = require('./routes/login')
+var create_user = require('./routes/create_user');
+var path = require('path');
+var follow = require('./routes/follow');
 
 var app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(session({secret: 'mntyuioplnbdw34567890okjuy6543ewsxcfgyu89okj'}));
+app.use(function(req,res, next){
+    req.userDB = UserAccount;
+    req.tweetDB = Tweet;
+    next();
+});
 
+app.use(session({
+  resave: false, // don't save session if unmodified
+  saveUninitialized: false, // don't create session until something stored
+  secret: 'leopard laughter'
+}));
+
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-//var routes = require('./routes/index');
-//var users = require('./routes/users');
-//var twitterfeed = require('./routes/twitterfeed');
+app.use('/fritter', fritter);
+app.use('/', index);
+app.use('/login', login);
+app.use ('/create_user', create_user);
+app.use('/follow', follow);
 
-//app.use('/users', users);
-app.use('/', express.static(__dirname)); //initialize to index.html
-//app.use('/twitterfeed', express.static(__dirname + '/twitterfeed.html'));
-//app.use('/twitterfeed', twitterfeed);
-
-/* var currentSession = new Session({ user: username });
-	myTweet.save(function (err, tweet) {
-		if (err) return console.error(err);
-		console.log("Successfully saved!");
-); */
-
-app.post('/twitterfeed', function(req,res) {
-	var username = req.body.user_box;
-	var password = req.body.password_box;
-
-	//see if user credentials exist in the database
-	UserAccount.findOne({'username': username, 'password': password}, {}, function (err, users) {
-		if (err) return console.error(err);
-		
-		//if they do, allow them to access the twitterfeed page
-		if (users) {
-			req.session.name = username;
-			Tweet.find(function (err, tweets) {
-				if (err) return console.error(err);
-				res.render('twitterfeed/twitterfeed.ejs', { 'tweets': tweets });
-			});
-		}
-		else {
-			res.redirect('/');
-		}
-	});
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
-app.get('/twitterfeed/delete', function(req,res) {
-	console.log("Deleting");
 
-	//copied directly from twitterfeed new tweet post
-	var username = undefined;
-	if (req.session != undefined && req.session != null) { //only show feed if there is a user logged in
-		username = req.session.name;
 
-		Tweet.find({ '_id': _id }).remove(function (err, result) {
-			console.log("removing");
-		});
-	}
-	else {
-		res.redirect('/'); //back to login screen
-	}
-});
-
-app.post('/twitterfeed/newtweet', function(req,res) {
-	var username = undefined;
-	if (req.session != undefined && req.session != null) { //only show feed if there is a user logged in
-		username = req.session.name;
-		console.log("username: ");
-		console.log(username);
-
-		var tweetMessage = req.body.newTweetInput;
-
-		var newTweet = new Tweet({ 'message': tweetMessage, 'username': username });
-		newTweet.save(function(err,tweets) {
-			if (err) return console.error(err);
-			console.log("newTweet.user: ");
-			console.log(newTweet.username);
-
-			Tweet.find(function (err, tweets) {
-				if (err) return console.error(err);
-				console.log("Tweets:");
-				console.log(tweets);
-				res.render('twitterfeed/twitterfeed.ejs', { 'tweets': tweets });
-			});
-		});
-	}
-	else {
-		res.redirect('/'); //back to login screen
-	}
-});
-
-app.post('/', function(req,res) {
-	var username = req.body.createUserBox;
-	var password = req.body.password1;
-
-    var newUser = new UserAccount({ 'username': username, 'password': password });
-    console.log(newUser);
-    newUser.save(function (err, user) {
-        if (err) {
-            console.log("ERROR in saving info to database");
-            return console.error(err);
-        }
-        res.redirect('/');
+///////////////////// Error handling
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
     });
+}
 
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
 });
 
 
+module.exports = app;
 
-app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080,
-           process.env.OPENSHIFT_NODEJS_IP);
-
-console.log("Listening on port :8080");
+app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP);
+console.log("Listening on port 8080");

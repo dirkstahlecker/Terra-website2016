@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fritter</title>
+  </head>
+
+<body>
+    <h1>Welcome to Fritter</h1>
+    
+<% if (success) { %>
+    <p>Welcome, <%= username %></p><br />
+    <div><a href="/fritter">Go to FritterFeed</a></div>
+<% } else { %>
+    <p>Login failed, please try again.</p>
+<% } %>
+    
+</body>
+</html>

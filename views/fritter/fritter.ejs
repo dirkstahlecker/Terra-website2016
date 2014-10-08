@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fritter</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+<style>
+	.displayTweetArea {
+		width: 50%;
+		height: 350px;
+		overflow: auto;
+		border-style: solid;
+		border-color: black;
+		border-width: 2px;
+		padding: 10px;
+	}
+	.displayTweet {
+		padding: 10px;
+		border-color: #1589FF;
+		border-style: solid;
+		border-width: 1px;
+		position: block;
+	}
+	.username {
+		color: #00F;
+		position: inline;
+	}
+	.message {
+		position: inline;
+	}
+	.controls {
+		text-align: right;
+		position: inline;
+	}
+	a.controls {
+		cursor: pointer;
+	}
+</style>
+<script type="text/javascript">
+	function doDelete(id) {
+		//store the id value in a hidden field, and submit form for handling
+		console.log("doing delete");
+		document.delDataSender.delDataHolder.value = id;
+		document.dataSender.submit();
+	}
+	function doEdit(id) {
+		console.log("doing edit");
+		document.editDataSender.editDataHolder.value = id;
+		document.editDataSender.submit();
+	}
+	function doRetweet(id) {
+		console.log("doing retweet");
+		document.retweetDataSender.retweetDataHolder.value = id;
+		document.retweetDataSender.submit();
+	}
+</script>
+</head>
+
+<body>
+
+<form name="delDataSender" id="delDataSender" method="post" action="/fritter/delete">
+	<input type="hidden" name="delDataHolder" id="delDataHolder" />
+</form>
+<form name="editDataSender" id="editDataSender" method="post" action="/fritter/edit">
+	<input type="hidden" name="editDataHolder" id="editDataHolder" />
+</form>
+<form name="retweetDataSender" id="retweetDataSender" method="post" action="/fritter/retweet">
+	<input type="hidden" name="retweetDataHolder" id="retweetDatHolder" />
+</form>
+
+<h1>Fritter Feed</h1>
+<p></p>
+<div><a href="/follow">View who you're following</a></div>
+<br />
+<br />
+
+<form name="newTweetForm" action="/fritter/new" method="post">
+Post New Tweet:<br />
+<input type="text" id="newTweetInput" name="newTweetInput" />
+<input type="submit" value="Enter" />
+</form>
+
+<br />
+<form name="followerUserForm" action="/fritter/follow" method="post">
+Type a user's name to follow:<br />
+<input type="text" id="toFollowInput" name="toFollowInput" />
+<input type="submit" value="Follow" />
+</form>
+
+<br />
+<form name="logOutForm" action="/" method="post">
+<input type="submit" value="Log out">
+</form>
+<br />
+<br />
+
+<div class="displayTweetArea">
+<% for(var i = tweets.length-1; i > 0; i--) {%>
+	<div class="displayTweet" id="tweets<%= tweets[i]._id %>">
+		<div class="username"><%= tweets[i].username %>:</div>
+		<% if (editing == tweets[i]._id) { %>
+			<form name="editingSingleTweet" id="editingSingleTweet" method="post" action="/fritter/edit/update">
+				<input type="text" id="editingBox" name="editingBox" value="<%= tweets[i].message %>" />
+				<input type="submit" id="submitEdit" name="submitEdit" value="Enter" />
+			</form>
+		<% } else { %>
+			<div class="message"><%= tweets[i].message %></div>
+		<% } %>
+		<div class="controls">
+			<a href="javascript:doRetweet('<%= tweets[i].id %>')">Retweet</a>&nbsp;&nbsp;
+			<a href="javascript:doEdit('<%= tweets[i].id %>')">Edit</a>&nbsp;&nbsp;
+			<a href="javascript:doDelete('<%= tweets[i].id %>')">Delete</a>
+		</div>
+	</div>
+	&nbsp;
+<% } %>
+</div>
+<br />
+<br />
+
+
+</body>
+</html>
