@@ -167,7 +167,7 @@ router.post('/retweet', function(req,res) {
 					message.replace(/Retweeted From /,'');
 					var loc = message.match(/.* /);
 					message = message.substring(loc,message.length);
-				}
+				} //TODO: test this
 				message = 'Retweeted from ' + tweet.username + ': ' + message; //TODO: if already been retweeted, handle
 				var reTweet = new Tweet({ 'message': message, 'username': username });
 
