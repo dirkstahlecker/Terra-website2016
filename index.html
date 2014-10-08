@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>FRITTER</title>
+<script src="validate.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+<h1>Fritter</h1>
+
+<form name="loginForm" action="/twitterfeed" method="post"><!-- onSubmit="return validateLogin();" -->
+    Log in:<br />
+    <label for="user_box">Username:</label>
+    <input type="text" name="user_box" id="user_box" placeholder="username" /> 
+    <label for="password_box">Password:</label>
+    <input type="password" name="password_box" id="password_box" placeholder="password" />
+    <input type="submit" value="Log in"/>
+</form>
+
+<form name="createUserForm" onSubmit="return validateCreateUser();" action="/" method="post">
+    Create New Account:</br>
+    <label for="createUserBox">Username:</label>
+    <input type="text" name="createUserBox" /><br />
+    <label for="password1">Password:</label>
+    <input type="password" name="password1" /><br />
+    <label for="password2">Confirm password:</label>
+    <input type="password" name="password2" /><br />
+    <input type="submit" value="Create Account" />
+</form>
+
+
+
+</body>
+</html>
